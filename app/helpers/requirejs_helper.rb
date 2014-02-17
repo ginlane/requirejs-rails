@@ -12,11 +12,10 @@ module RequirejsHelper
       if name
         name += ".js" unless name =~ /\.js$/
         data['main'] = _javascript_path(name).
-                        sub(/\.js$/,'').
-                        sub(baseUrl(name), '').
-                        sub(/\A\//, '')
+                        # sub(/\.js$/,'').
+                        sub(baseUrl(name), '')
+                        # sub(/\A\//, '')
       end
-
       data.merge!(yield controller) if block_given?
     end.map do |k, v|
       %Q{data-#{k}="#{v}"}
@@ -98,7 +97,8 @@ module RequirejsHelper
   def baseUrl(js_asset)
     js_asset_path = javascript_path(js_asset)
     uri = URI.parse(js_asset_path)
-    asset_host = uri.host && js_asset_path.sub(uri.request_uri, '')
+    js_asset_path = uri.respond_to?('request_uri') ? js_asset_path.sub(uri.request_uri, '') : js_asset_path
+    asset_host = uri.host && js_asset_path
     [asset_host, Rails.application.config.assets.prefix].join
   end
 end

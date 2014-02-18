@@ -14,6 +14,10 @@ module Requirejs
 
       config.before_initialize do |app|
         config = app.config
+        if config.requirejs.nil?
+          config.requirejs = Requirejs::Rails::Config.new
+          config.requirejs.precompile = [/require\.js$/]
+        end
 
         # Process the user config file in #before_initalization (instead of #before_configuration) so that
         # environment-specific configuration can be injected into the user configuration file
